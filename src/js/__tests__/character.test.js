@@ -9,8 +9,8 @@ let magician = new Magician("magician");
 
 // Правильно ли создаются наследники
 test.each([
-    [daemon, {name: "daemon", type: "Daemon", health: 100, level: 1, atackDefault: 10, spoiledAtack: undefined, defence: 40}],
-    [magician, {name: "magician", type: "Magician", health: 100, level: 1, atackDefault: 10, spoiledAtack: undefined, defence: 40}]
+    [daemon, { name: "daemon", type: "Daemon", health: 100, level: 1, _atack: 10, _stoned: false, distance: 0, defence: 40 }],
+    [magician, { name: "magician", type: "Magician", health: 100, level: 1, _atack: 10, _stoned: false, distance: 0, defence: 40 }]
 ])('atack', (character, state) => {
     const result = character;
     expect(result).toEqual(state);
@@ -21,16 +21,17 @@ test.each([
 test("Daemon levelup", () => {
     daemon.levelUp();
 
-    const expected = 
-        {
-            atackDefault: 12,
-            defence: 48,
-            health: 100,
-            level: 2,
-            name: "daemon",
-            spoiledAtack: undefined,
-            type: "Daemon"
-        };
+    const expected =
+    {
+        _atack: 13.2,
+        defence: 48,
+        health: 100,
+        level: 2,
+        name: "daemon",
+        _stoned: false,
+        distance: 0,
+        type: "Daemon"
+    };
 
     const result = daemon;
 
@@ -66,26 +67,26 @@ test("Damage to a dead character", () => {
     expect(() => magician.damage(10)).toThrow(Error);
 });
 
-// Проверка на нанесение урона магом на расстоянии по немагам
-test('Damage dealt by mages within range on non-mages', () => {
-    daemon.atack = 4;
-    expect(daemon.atack).toBeCloseTo(7.2);
+// Магический персонаж атакует клетку 2 (без дурмана)
+test('Magician attack cell 2 whith the dope', () => {
+    magician.stoned = false;
+    magician.distance = 2;
+    const result = magician.atack;
+    expect(result).toBe(9);
 });
 
-// Проверка на нанесение урона магом на расстоянии, большем, чем радиус действия, по немагам
-test('Damage dealt by mages out of range on non-mages', () => {
-    daemon.atack = 20;
-    expect(daemon.atack).toBe(0);
+// Магические персонаж атакует клетку 2 (с дурманом)
+test('Magician attack cell 2 whithout dope', () => {
+    magician.stoned = true;
+    magician.distance = 2;
+    const result = magician.atack;
+    expect(result).toBe(4);
 });
 
-// Проверка на нанесение урона магом на расстоянии по магам
-test('Damage dealt by mages within range on mages', () => {
-    daemon.stoned = 4;
-    expect(daemon.stoned).toBe(2);
-});
-
-// Проверка на нанесение урона магом на расстоянии, большем, чем радиус действия, по магам
-test('Damage dealt by mages out of range on mages', () => {
-    daemon.stoned = 40;
-    expect(daemon.stoned).toBe(0);
+// Магический персонаж атакует клетку 6 (без дурмана)
+test('Daemon attack cell 6 whithout dope', () => {
+    daemon.stoned = false;
+    daemon.distance = 6;
+    const result = daemon.atack;
+    expect(result).toBe(0);
 });

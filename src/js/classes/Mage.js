@@ -3,30 +3,35 @@ import Character from './Character';
 export default class Mage extends Character {
   constructor(name, type) {
     super(name, type);
-    this.atackDefault = 10;
+    this.atack = 10;
     this.defence = 40;
-    this.spoiledAtack = undefined;
+    this.stoned = false;
+    this.distance = 0;
   }
 
   get stoned() {
-    return this.spoiledAtack;
+    return this._stoned;
   }
 
-  set stoned(cell) {
-    this.spoiledAtack = this.atackDefault - 5 * Math.log2(cell);
-    if (this.spoiledAtack < 0) {
-      this.spoiledAtack = 0;
-    }
+  set stoned(value) {
+    this._stoned = value;
   }
 
   get atack() {
-    return this.spoiledAtack;
+    if (this.distance < 0 || this.distance > 5) {
+        return 0;
+    }
+
+    let atack = this._atack - (this._atack / 10) * (this.distance - 1);
+
+    if (this.stoned === true) {
+        atack -= Math.log2(this.distance) * 5;
+    }
+
+    return Math.floor(atack);
   }
 
-  set atack(cell) {
-    this.spoiledAtack = (1 - cell / 10) * this.atackDefault;
-    if (this.spoiledAtack < 0) {
-      this.spoiledAtack = 0;
-    }
+  set atack(value) {
+    this._atack = value;
   }
 }

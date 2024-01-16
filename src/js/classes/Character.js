@@ -18,14 +18,14 @@ export default class Character {
         this.type = type;
         this.health = 100;
         this.level = 1;
-        this.atackDefault = undefined;
+        this.atack = undefined;
         this.defence = undefined;
     }
 
     levelUp() {
         if (this.health > 0) {
             this.level++;
-            this.atackDefault += Number(this.atackDefault) * 0.2;
+            this.atack += Number(this.atack) * 0.2;
             this.defence += Number(this.defence) * 0.2;
             this.health = 100;
         } else {
